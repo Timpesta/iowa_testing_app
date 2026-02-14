@@ -1,0 +1,93 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { approveSchool } from "@/lib/actions/admin";
+
+const CODE_REGEX = /^[A-Z]{2,4}$/;
+
+export function ApproveSchoolForm({
+  schoolId,
+  schoolName,
+}: {
+  schoolId: string;
+  schoolName: string;
+}) {
+  const router = useRouter();
+  const [code, setCode] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    const normalized = code.trim().toUpperCase();
+    if (!CODE_REGEX.test(normalized)) {
+      setError("Code must be 2–4 uppercase letters.");
+      return;
+    }
+    setSubmitting(true);
+    const result = await approveSchool(schoolId, normalized);
+    setSubmitting(false);
+    if (result.success) {
+      router.push("/admin/schools?filter=pending");
+      router.refresh();
+    } else {
+      setError(result.message);
+    }
+  }
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setCode(e.target.value.toUpperCase().slice(0, 4));
+    setError(null);
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {error && (
+        <div
+          role="alert"
+          className="rounded-lg bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm"
+        >
+          {error}
+        </div>
+      )}
+      <div>
+        <label
+          htmlFor="code"
+          className="block text-sm font-medium text-slate-700 mb-1"
+        >
+          School code
+        </label>
+        <input
+          id="code"
+          type="text"
+          value={code}
+          onChange={handleChange}
+          placeholder="e.g. AABQ"
+          maxLength={4}
+          autoComplete="off"
+          className="w-full rounded-lg border border-slate-300 px-3 py-2 font-mono text-slate-900 uppercase focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+        />
+        <p className="mt-1 text-xs text-slate-500">
+          2–4 uppercase letters, unique across all schools.
+        </p>
+      </div>
+      <div className="flex gap-3">
+        <button
+          type="submit"
+          disabled={submitting || code.length < 2}
+          className="rounded-lg bg-slate-900 px-4 py-2 text-white font-medium hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:pointer-events-none"
+        >
+          {submitting ? "Saving…" : "Approve school"}
+        </button>
+        <a
+          href="/admin/schools?filter=pending"
+          className="rounded-lg border border-slate-300 px-4 py-2 text-slate-700 font-medium hover:bg-slate-50 transition-colors"
+        >
+          Cancel
+        </a>
+      </div>
+    </form>
+  );
+}
