@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { approveSchool } from "@/lib/actions/admin";
 
 const CODE_REGEX = /^[A-Z]{2,4}$/;
@@ -13,9 +12,9 @@ export function ApproveSchoolForm({
   schoolId: string;
   schoolName: string;
 }) {
-  const router = useRouter();
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -30,8 +29,7 @@ export function ApproveSchoolForm({
     const result = await approveSchool(schoolId, normalized);
     setSubmitting(false);
     if (result.success) {
-      router.push("/admin/schools?filter=pending");
-      router.refresh();
+      setSuccessMessage(result.message);
     } else {
       setError(result.message);
     }
@@ -40,6 +38,25 @@ export function ApproveSchoolForm({
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setCode(e.target.value.toUpperCase().slice(0, 4));
     setError(null);
+  }
+
+  if (successMessage) {
+    return (
+      <div className="space-y-4">
+        <div
+          role="status"
+          className="rounded-lg bg-green-50 border border-green-200 text-green-800 px-4 py-3 text-sm"
+        >
+          {successMessage}
+        </div>
+        <a
+          href="/admin/schools?filter=pending"
+          className="inline-block rounded-lg bg-slate-900 px-4 py-2 text-white font-medium hover:bg-slate-800"
+        >
+          Back to schools
+        </a>
+      </div>
+    );
   }
 
   return (
