@@ -8,23 +8,25 @@ export type Cycle = {
   created_at: string;
 };
 
-export async function getActiveCycle(): Promise<Cycle | null> {
-  const { data } = await supabase
+/** Fetch all cycles (one query), then split into active and history. */
+async function getAllCycles(): Promise<Cycle[]> {
+  const { data, error } = await supabase
     .from("cycles")
     .select("id, type, year, status, created_at")
-    .eq("status", "active")
-    .maybeSingle();
-  return data;
+    .order("year", { ascending: false })
+    .order("type", { ascending: false });
+  if (error) return [];
+  return (data ?? []) as Cycle[];
+}
+
+export async function getActiveCycle(): Promise<Cycle | null> {
+  const all = await getAllCycles();
+  return all.find((c) => c.status === "active") ?? null;
 }
 
 export async function getCyclesHistory(): Promise<Cycle[]> {
-  const { data } = await supabase
-    .from("cycles")
-    .select("id, type, year, status, created_at")
-    .eq("status", "closed")
-    .order("year", { ascending: false })
-    .order("type", { ascending: false });
-  return data ?? [];
+  const all = await getAllCycles();
+  return all.filter((c) => c.status === "closed");
 }
 
 export function formatCycleLabel(cycle: { type: string; year: number }): string {
