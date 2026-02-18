@@ -35,6 +35,9 @@ export default async function SchoolLayout({
             <Link href="/school/roster" className="hover:text-slate-900">
               Roster
             </Link>
+            <Link href="/faq" className="hover:text-slate-900">
+              FAQ
+            </Link>
           </nav>
         </div>
       </header>

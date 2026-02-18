@@ -24,7 +24,10 @@ export default async function SchoolDashboardPage() {
         Welcome, {school?.name}
       </h1>
       <p className="text-slate-600 mb-4">
-        Manage your students and testing cycles from here.
+        Manage your students and testing cycles from here.{" "}
+        <Link href="/faq" className="text-slate-700 hover:text-slate-900 underline">
+          FAQ
+        </Link>
       </p>
       {activeCycle && (
         <div className="bg-slate-900 text-white rounded-lg px-4 py-3 mb-8">
