@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import { getActiveCycle, formatCycleLabel } from "@/lib/cycles";
 
 async function getCounts() {
   const [schoolsRes, pendingRes, approvedRes, studentsRes] = await Promise.all([
@@ -24,11 +25,20 @@ async function getCounts() {
 }
 
 export default async function AdminDashboardPage() {
-  const counts = await getCounts();
+  const [counts, activeCycle] = await Promise.all([
+    getCounts(),
+    getActiveCycle(),
+  ]);
 
   return (
     <div>
       <h1 className="text-2xl font-semibold text-slate-900 mb-8">Dashboard</h1>
+      {activeCycle && (
+        <div className="bg-slate-900 text-white rounded-lg px-4 py-3 mb-8">
+          <p className="text-sm text-slate-300">Current cycle</p>
+          <p className="text-xl font-semibold">{formatCycleLabel(activeCycle)}</p>
+        </div>
+      )}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
         <div className="bg-white rounded-lg border border-slate-200 p-6">
           <p className="text-sm text-slate-500 font-medium">Pending schools</p>
