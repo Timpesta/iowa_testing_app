@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function SchoolDashboardPage() {
@@ -24,9 +25,15 @@ export default async function SchoolDashboardPage() {
         <h2 className="text-lg font-medium text-slate-900 mb-2">
           Roster management
         </h2>
-        <p className="text-slate-500 text-sm">
-          Roster management coming soon.
+        <p className="text-slate-500 text-sm mb-4">
+          Add and edit students for testing.
         </p>
+        <Link
+          href="/school/roster"
+          className="text-sm font-medium text-slate-700 hover:text-slate-900"
+        >
+          Open roster →
+        </Link>
       </div>
     </div>
   );

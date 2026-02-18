@@ -28,12 +28,12 @@ export default async function SchoolLayout({
           <Link href="/school/dashboard" className="font-semibold text-slate-900">
             {school.name}
           </Link>
-          <nav className="text-sm text-slate-600">
-            <Link
-              href="/school/dashboard"
-              className="hover:text-slate-900"
-            >
+          <nav className="text-sm text-slate-600 flex gap-6">
+            <Link href="/school/dashboard" className="hover:text-slate-900">
               Dashboard
+            </Link>
+            <Link href="/school/roster" className="hover:text-slate-900">
+              Roster
             </Link>
           </nav>
         </div>
