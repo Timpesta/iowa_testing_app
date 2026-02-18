@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { getActiveCycle, formatCycleLabel } from "@/lib/cycles";
+import { getSubmissionStats } from "@/lib/submissions";
+
+export const dynamic = "force-dynamic";
 
 async function getCounts() {
   const [schoolsRes, pendingRes, approvedRes, studentsRes] = await Promise.all([
@@ -25,10 +28,22 @@ async function getCounts() {
 }
 
 export default async function AdminDashboardPage() {
-  const [counts, activeCycle] = await Promise.all([
+  const [counts, activeCycle, submissionStats] = await Promise.all([
     getCounts(),
     getActiveCycle(),
+    getSubmissionStats(),
   ]);
+
+  const notSubmittedIds = submissionStats.notSubmittedSchoolIds;
+  const notSubmittedSchools =
+    notSubmittedIds.length > 0
+      ? await supabase
+          .from("schools")
+          .select("id, name")
+          .in("id", notSubmittedIds)
+          .order("name")
+      : { data: [] as { id: string; name: string }[] };
+  const notSubmittedList = notSubmittedSchools.data ?? [];
 
   return (
     <div>
@@ -59,6 +74,24 @@ export default async function AdminDashboardPage() {
           </p>
         </div>
       </div>
+      {activeCycle && submissionStats.approvedCount > 0 && (
+        <div className="bg-white rounded-lg border border-slate-200 p-6 mb-8">
+          <p className="text-sm text-slate-500 font-medium mb-1">Current cycle submissions</p>
+          <p className="text-xl font-semibold text-slate-900">
+            {submissionStats.submittedCount} of {submissionStats.approvedCount} schools have submitted
+          </p>
+          {notSubmittedList.length > 0 && (
+            <div className="mt-4">
+              <p className="text-sm text-slate-600 font-medium mb-2">Schools that haven’t submitted yet</p>
+              <ul className="text-sm text-slate-700 list-disc list-inside space-y-0.5">
+                {notSubmittedList.map((s) => (
+                  <li key={s.id}>{s.name}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
       {counts.pendingSchools > 0 && (
         <Link
           href="/admin/schools?filter=pending"

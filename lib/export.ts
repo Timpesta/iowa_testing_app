@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { formatDateDisplay } from "@/lib/roster-utils";
+import { getSubmittedSchoolIdsForActiveCycle } from "@/lib/submissions";
 
 export type ExportRow = {
   schoolName: string;
@@ -73,12 +74,7 @@ type StudentWithSchool = {
 };
 
 export async function getExportRows(limit?: number): Promise<ExportRow[]> {
-  const { data: approvedSchools } = await supabase
-    .from("schools")
-    .select("id")
-    .eq("status", "approved");
-
-  const ids = (approvedSchools ?? []).map((s) => s.id);
+  const ids = await getSubmittedSchoolIdsForActiveCycle();
   if (ids.length === 0) return [];
 
   let query = supabase
@@ -118,17 +114,13 @@ export async function getExportRows(limit?: number): Promise<ExportRow[]> {
     .filter((row): row is ExportRow => row != null);
 }
 
-export async function getExportCount(): Promise<number> {
-  const { data: approvedSchools } = await supabase
-    .from("schools")
-    .select("id")
-    .eq("status", "approved");
-  const ids = (approvedSchools ?? []).map((s) => s.id);
-  if (ids.length === 0) return 0;
+export async function getExportCount(): Promise<{ studentCount: number; schoolCount: number }> {
+  const ids = await getSubmittedSchoolIdsForActiveCycle();
+  if (ids.length === 0) return { studentCount: 0, schoolCount: 0 };
   const { count } = await supabase
     .from("students")
     .select("id", { count: "exact", head: true })
     .eq("active", true)
     .in("school_id", ids);
-  return count ?? 0;
+  return { studentCount: count ?? 0, schoolCount: ids.length };
 }

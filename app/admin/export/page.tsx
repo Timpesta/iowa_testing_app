@@ -5,11 +5,13 @@ import Link from "next/link";
 const PREVIEW_LIMIT = 10;
 
 export default async function AdminExportPage() {
-  const [activeCycle, totalCount, previewRows] = await Promise.all([
+  const [activeCycle, exportCount, previewRows] = await Promise.all([
     getActiveCycle(),
     getExportCount(),
     getExportRows(PREVIEW_LIMIT),
   ]);
+
+  const { studentCount, schoolCount } = exportCount;
 
   return (
     <div>
@@ -30,16 +32,17 @@ export default async function AdminExportPage() {
 
       <div className="bg-white rounded-lg border border-slate-200 p-6 mb-8">
         <p className="text-slate-700 mb-2">
-          Export all active students from all approved schools as a CSV for the current cycle.
+          Export active students from schools that have submitted for the current cycle.
         </p>
         <p className="text-slate-600 text-sm mb-4">
-          <strong>{totalCount}</strong> student{totalCount !== 1 ? "s" : ""} will be exported.
+          Exporting <strong>{studentCount}</strong> student{studentCount !== 1 ? "s" : ""} from{" "}
+          <strong>{schoolCount}</strong> school{schoolCount !== 1 ? "s" : ""}.
         </p>
         <a
           href={activeCycle ? "/admin/export/csv" : "#"}
           download
           className={`inline-flex rounded-lg px-4 py-2 text-sm font-medium ${
-            activeCycle && totalCount > 0
+            activeCycle && studentCount > 0
               ? "bg-slate-900 text-white hover:bg-slate-800"
               : "bg-slate-200 text-slate-500 cursor-not-allowed pointer-events-none"
           }`}
@@ -88,8 +91,10 @@ export default async function AdminExportPage() {
         </div>
       )}
 
-      {totalCount === 0 && activeCycle && (
-        <p className="text-slate-500 text-sm">No active students to export.</p>
+      {studentCount === 0 && activeCycle && (
+        <p className="text-slate-500 text-sm">
+          No students to export. Only schools that have submitted for the current cycle are included.
+        </p>
       )}
     </div>
   );

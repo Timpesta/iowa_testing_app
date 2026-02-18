@@ -2,6 +2,9 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { formatDateDisplay } from "@/lib/roster-utils";
+import { getActiveCycle } from "@/lib/cycles";
+import { getSchoolSubmissionForCurrentCycle } from "@/lib/submissions";
+import { SubmitRosterBlock } from "@/components/roster/SubmitRosterBlock";
 
 const GENDER_LABELS: Record<string, string> = {
   M: "Male",
@@ -33,11 +36,15 @@ async function getSchoolAndStudents() {
 }
 
 export default async function RosterPage() {
-  const { students } = await getSchoolAndStudents();
+  const { school, students } = await getSchoolAndStudents();
+  const [activeCycle, submission] = await Promise.all([
+    getActiveCycle(),
+    getSchoolSubmissionForCurrentCycle(school.id),
+  ]);
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-semibold text-slate-900">Student roster</h1>
         <Link
           href="/school/roster/add"
@@ -46,6 +53,10 @@ export default async function RosterPage() {
           Add student
         </Link>
       </div>
+      <SubmitRosterBlock
+        activeCycle={activeCycle}
+        submittedAt={submission?.submitted_at ?? null}
+      />
       <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
         <table className="w-full">
           <thead>

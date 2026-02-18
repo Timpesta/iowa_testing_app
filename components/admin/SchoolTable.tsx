@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { formatSubmittedAt } from "@/lib/roster-utils";
+import type { Cycle } from "@/lib/cycles";
 
 type School = {
   id: string;
@@ -8,6 +10,7 @@ type School = {
   contact_email: string;
   status: string;
   code: string | null;
+  submittedAt: string | null;
 };
 
 type Filter = "all" | "pending" | "approved";
@@ -21,9 +24,11 @@ const filters: { value: Filter; label: string }[] = [
 export function SchoolTable({
   schools,
   currentFilter,
+  activeCycle,
 }: {
   schools: School[];
   currentFilter: Filter;
+  activeCycle: Cycle | null;
 }) {
   return (
     <div>
@@ -58,6 +63,11 @@ export function SchoolTable({
               <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
                 Code
               </th>
+              {activeCycle && (
+                <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
+                  Current cycle
+                </th>
+              )}
               <th className="text-right text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
                 Actions
               </th>
@@ -67,7 +77,7 @@ export function SchoolTable({
             {schools.length === 0 ? (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={activeCycle ? 6 : 5}
                   className="px-4 py-8 text-center text-slate-500 text-sm"
                 >
                   No schools found.
@@ -97,6 +107,13 @@ export function SchoolTable({
                   <td className="px-4 py-3 text-slate-600 font-mono text-sm">
                     {school.code ?? "—"}
                   </td>
+                  {activeCycle && (
+                    <td className="px-4 py-3 text-slate-600 text-sm">
+                      {school.submittedAt != null
+                        ? `Submitted ${formatSubmittedAt(school.submittedAt)}`
+                        : "Not submitted"}
+                    </td>
+                  )}
                   <td className="px-4 py-3 text-right">
                     {school.status === "pending" && (
                       <Link

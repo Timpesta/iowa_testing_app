@@ -28,6 +28,17 @@ export function formatDateDisplay(iso: string): string {
   return `${m}/${d}/${y}`;
 }
 
+/** Format timestamp for display: e.g. "1/15/2025" */
+export function formatSubmittedAt(iso: string): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return d.toLocaleDateString("en-US", {
+    month: "numeric",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 export function getGradeOptions() {
   return GRADE_OPTIONS;
 }
