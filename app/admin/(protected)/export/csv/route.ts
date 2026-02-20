@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getActiveCycle } from "@/lib/cycles";
 import { getExportRows, buildCsv } from "@/lib/export";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const activeCycle = await getActiveCycle();
   const rows = await getExportRows();
