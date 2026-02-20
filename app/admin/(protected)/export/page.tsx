@@ -55,7 +55,7 @@ export default async function AdminExportPage() {
         <div className="mb-8">
           <h2 className="text-lg font-medium text-slate-900 mb-3">Preview (first 10 rows)</h2>
           <div className="bg-white rounded-lg border border-slate-200 overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[900px] text-sm">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50/80">
                   <th className="text-left font-semibold text-slate-600 px-4 py-2">School/Building</th>

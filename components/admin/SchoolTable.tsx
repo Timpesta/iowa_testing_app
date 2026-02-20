@@ -21,6 +21,12 @@ const filters: { value: Filter; label: string }[] = [
   { value: "approved", label: "Approved" },
 ];
 
+const EMPTY_MESSAGES: Record<Filter, string> = {
+  all: "No schools have registered yet.",
+  pending: "No schools are pending approval.",
+  approved: "No schools have been approved yet.",
+};
+
 export function SchoolTable({
   schools,
   currentFilter,
@@ -30,6 +36,8 @@ export function SchoolTable({
   currentFilter: Filter;
   activeCycle: Cycle | null;
 }) {
+  const colSpan = activeCycle ? 6 : 5;
+
   return (
     <div>
       <div className="flex gap-1 mb-6 border-b border-slate-200">
@@ -47,8 +55,9 @@ export function SchoolTable({
           </Link>
         ))}
       </div>
-      <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
-        <table className="w-full">
+
+      <div className="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table className="w-full min-w-[640px]">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50/80">
               <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
@@ -76,11 +85,8 @@ export function SchoolTable({
           <tbody>
             {schools.length === 0 ? (
               <tr>
-                <td
-                  colSpan={activeCycle ? 6 : 5}
-                  className="px-4 py-8 text-center text-slate-500 text-sm"
-                >
-                  No schools found.
+                <td colSpan={colSpan} className="px-4 py-10 text-center text-slate-500 text-sm">
+                  {EMPTY_MESSAGES[currentFilter]}
                 </td>
               </tr>
             ) : (
@@ -89,9 +95,7 @@ export function SchoolTable({
                   key={school.id}
                   className="border-b border-slate-100 last:border-0 hover:bg-slate-50/50"
                 >
-                  <td className="px-4 py-3 text-slate-900 font-medium">
-                    {school.name}
-                  </td>
+                  <td className="px-4 py-3 text-slate-900 font-medium">{school.name}</td>
                   <td className="px-4 py-3 text-slate-600">{school.contact_email}</td>
                   <td className="px-4 py-3">
                     <span
@@ -109,9 +113,13 @@ export function SchoolTable({
                   </td>
                   {activeCycle && (
                     <td className="px-4 py-3 text-slate-600 text-sm">
-                      {school.submittedAt != null
-                        ? `Submitted ${formatSubmittedAt(school.submittedAt)}`
-                        : "Not submitted"}
+                      {school.submittedAt != null ? (
+                        <span className="text-green-700 font-medium">
+                          Submitted {formatSubmittedAt(school.submittedAt)}
+                        </span>
+                      ) : (
+                        <span className="text-slate-400">Not submitted</span>
+                      )}
                     </td>
                   )}
                   <td className="px-4 py-3 text-right">

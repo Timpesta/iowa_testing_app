@@ -33,25 +33,25 @@ export function StudentForm({
   const router = useRouter();
   const [addState, addAction] = useFormState(addStudent, null);
   const [editState, editAction] = useFormState(updateStudent, null);
-
   const [fieldError, setFieldError] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
 
   const state = mode === "add" ? addState : editState;
   const formAction = mode === "add" ? addAction : editAction;
 
   if (state?.success) {
-    if (mode === "add") {
-      router.push("/school/roster");
-      router.refresh();
-    } else {
-      router.push("/school/roster");
-      router.refresh();
-    }
+    router.push("/school/roster");
+    router.refresh();
     return (
       <p className="text-green-600 text-sm">
         {mode === "add" ? "Student added." : "Student updated."} Redirecting…
       </p>
     );
+  }
+
+  // Reset pending if server returned an error
+  if (state && !state.success && pending) {
+    setPending(false);
   }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -64,11 +64,16 @@ export function StudentForm({
       e.preventDefault();
       return;
     }
+    setPending(true);
   }
+
+  const buttonLabel = pending
+    ? mode === "add" ? "Adding…" : "Saving…"
+    : mode === "add" ? "Add student" : "Save changes";
 
   return (
     <form action={formAction} onSubmit={handleSubmit} className="space-y-5 max-w-md">
-      {(state && !state.success) && (
+      {state && !state.success && (
         <div
           role="alert"
           className="rounded-lg bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm"
@@ -186,12 +191,13 @@ export function StudentForm({
         </select>
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex gap-3 flex-wrap">
         <button
           type="submit"
-          className="rounded-lg bg-slate-900 px-4 py-2 text-white font-medium hover:bg-slate-800"
+          disabled={pending}
+          className="rounded-lg bg-slate-900 px-4 py-2 text-white font-medium hover:bg-slate-800 disabled:opacity-50 disabled:pointer-events-none"
         >
-          {mode === "add" ? "Add student" : "Save changes"}
+          {buttonLabel}
         </button>
         <a
           href="/school/roster"
