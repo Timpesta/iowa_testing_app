@@ -73,18 +73,32 @@ type StudentWithSchool = {
   school: SchoolRow | SchoolRow[] | null;
 };
 
-export async function getExportRows(limit?: number): Promise<ExportRow[]> {
+/**
+ * Fetch export rows for submitted schools in the active cycle.
+ * Pass `since` (ISO timestamp) to restrict to students created after that time.
+ * Pass `limit` for preview truncation.
+ */
+export async function getExportRows(
+  limit?: number,
+  since?: string
+): Promise<ExportRow[]> {
   const ids = await getSubmittedSchoolIdsForActiveCycle();
   if (ids.length === 0) return [];
 
   let query = supabase
     .from("students")
-    .select("first_name, last_name, student_id, date_of_birth, gender, grade, school:schools(name, code)")
+    .select(
+      "first_name, last_name, student_id, date_of_birth, gender, grade, school:schools(name, code)"
+    )
     .eq("active", true)
     .in("school_id", ids)
     .order("school_id")
     .order("last_name")
     .order("first_name");
+
+  if (since) {
+    query = query.gt("created_at", since);
+  }
 
   if (typeof limit === "number" && limit > 0) {
     query = query.limit(limit);
@@ -114,13 +128,27 @@ export async function getExportRows(limit?: number): Promise<ExportRow[]> {
     .filter((row): row is ExportRow => row != null);
 }
 
-export async function getExportCount(): Promise<{ studentCount: number; schoolCount: number }> {
+/**
+ * Count exportable students and schools for the active cycle.
+ * Pass `since` to count only students added after that timestamp.
+ */
+export async function getExportCount(since?: string): Promise<{
+  studentCount: number;
+  schoolCount: number;
+}> {
   const ids = await getSubmittedSchoolIdsForActiveCycle();
   if (ids.length === 0) return { studentCount: 0, schoolCount: 0 };
-  const { count } = await supabase
+
+  let query = supabase
     .from("students")
     .select("id", { count: "exact", head: true })
     .eq("active", true)
     .in("school_id", ids);
+
+  if (since) {
+    query = query.gt("created_at", since);
+  }
+
+  const { count } = await query;
   return { studentCount: count ?? 0, schoolCount: ids.length };
 }

@@ -1,17 +1,31 @@
+import Link from "next/link";
 import { getActiveCycle, formatCycleLabel } from "@/lib/cycles";
 import { getExportRows, getExportCount } from "@/lib/export";
-import Link from "next/link";
+import { getLastExportForCycle, formatExportedAt } from "@/lib/exports-log";
+
+export const dynamic = "force-dynamic";
 
 const PREVIEW_LIMIT = 10;
 
 export default async function AdminExportPage() {
-  const [activeCycle, exportCount, previewRows] = await Promise.all([
-    getActiveCycle(),
+  const activeCycle = await getActiveCycle();
+
+  const [allCount, lastExport, preview] = await Promise.all([
     getExportCount(),
+    activeCycle ? getLastExportForCycle(activeCycle.id) : Promise.resolve(null),
     getExportRows(PREVIEW_LIMIT),
   ]);
 
-  const { studentCount, schoolCount } = exportCount;
+  // Count new students only after we know the lastExport timestamp
+  const newCount = lastExport
+    ? await getExportCount(lastExport.exported_at)
+    : null;
+
+  const { studentCount, schoolCount } = allCount;
+  const newStudentCount = newCount?.studentCount ?? 0;
+
+  const hasExported = lastExport !== null;
+  const canExport = !!activeCycle && studentCount > 0;
 
   return (
     <div>
@@ -40,45 +54,94 @@ export default async function AdminExportPage() {
         </div>
       )}
 
-      {/* Export card */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 mb-8">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
-          Roster export
-        </h2>
-        <p className="text-slate-600 text-sm mb-1">
-          Exports active students from schools that have submitted for the current cycle.
-        </p>
-        <p className="text-2xl font-bold text-navy-800 mb-1">
-          {studentCount}{" "}
-          <span className="text-base font-normal text-slate-500">
-            student{studentCount !== 1 ? "s" : ""} from {schoolCount} school{schoolCount !== 1 ? "s" : ""}
-          </span>
-        </p>
+      {/* Export cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
 
-        <a
-          href={activeCycle ? "/admin/export/csv" : "#"}
-          download
-          className={`mt-4 inline-flex rounded-lg px-5 py-2.5 text-sm font-semibold transition-colors ${
-            activeCycle && studentCount > 0
-              ? "bg-amber-500 text-white hover:bg-amber-600"
-              : "bg-slate-100 text-slate-400 cursor-not-allowed pointer-events-none"
-          }`}
-        >
-          Export all students
-        </a>
-
-        {activeCycle && studentCount === 0 && (
-          <p className="mt-3 text-xs text-slate-400">
-            No students to export. Only schools that have submitted for the current cycle are included.
+        {/* Full export */}
+        <div className="bg-white rounded-xl border border-slate-200 p-6">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
+            Full roster export
           </p>
+          <p className="text-3xl font-bold text-navy-800 mb-0.5">{studentCount}</p>
+          <p className="text-sm text-slate-500 mb-4">
+            student{studentCount !== 1 ? "s" : ""} from {schoolCount} school{schoolCount !== 1 ? "s" : ""}
+          </p>
+
+          {hasExported && lastExport && (
+            <p className="text-xs text-slate-400 mb-4">
+              Last exported {formatExportedAt(lastExport.exported_at)}
+              {" "}({lastExport.student_count} student{lastExport.student_count !== 1 ? "s" : ""})
+            </p>
+          )}
+
+          <a
+            href={canExport ? "/admin/export/csv" : "#"}
+            download
+            className={`inline-flex rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+              canExport
+                ? "bg-amber-500 text-white hover:bg-amber-600"
+                : "bg-slate-100 text-slate-400 cursor-not-allowed pointer-events-none"
+            }`}
+          >
+            Export all students
+          </a>
+
+          {activeCycle && studentCount === 0 && (
+            <p className="mt-3 text-xs text-slate-400">
+              No students to export. Schools must submit their roster first.
+            </p>
+          )}
+        </div>
+
+        {/* Late additions export — only shown after at least one prior export */}
+        {hasExported && lastExport && (
+          <div className="bg-white rounded-xl border border-slate-200 p-6">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
+              Late additions
+            </p>
+            <p className="text-3xl font-bold text-navy-800 mb-0.5">{newStudentCount}</p>
+            <p className="text-sm text-slate-500 mb-4">
+              new student{newStudentCount !== 1 ? "s" : ""} since last export
+            </p>
+            <p className="text-xs text-slate-400 mb-4">
+              Students added after {formatExportedAt(lastExport.exported_at)}
+            </p>
+
+            <a
+              href={newStudentCount > 0 ? "/admin/export/csv?type=new" : "#"}
+              download
+              className={`inline-flex rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+                newStudentCount > 0
+                  ? "bg-navy-800 text-white hover:bg-navy-900"
+                  : "bg-slate-100 text-slate-400 cursor-not-allowed pointer-events-none"
+              }`}
+            >
+              Export new students only
+            </a>
+
+            {newStudentCount === 0 && (
+              <p className="mt-3 text-xs text-slate-400">
+                No new students have been added since the last export.
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Placeholder when no exports yet — show hint in place of the second card */}
+        {!hasExported && activeCycle && (
+          <div className="bg-slate-50 rounded-xl border border-dashed border-slate-200 p-6 flex items-center justify-center">
+            <p className="text-slate-400 text-sm text-center">
+              "Export new students only" will appear here after your first full export.
+            </p>
+          </div>
         )}
       </div>
 
       {/* Preview table */}
-      {previewRows.length > 0 && (
+      {preview.length > 0 && (
         <div>
           <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
-            Preview — first {previewRows.length} rows
+            Preview — first {preview.length} rows
           </h2>
           <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto">
             <table className="w-full min-w-[900px] text-sm">
@@ -97,7 +160,7 @@ export default async function AdminExportPage() {
                 </tr>
               </thead>
               <tbody>
-                {previewRows.map((row, i) => (
+                {preview.map((row, i) => (
                   <tr key={i} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/70 transition-colors">
                     <td className="px-4 py-2.5 text-navy-800 font-medium">{row.schoolName}</td>
                     <td className="px-4 py-2.5 font-mono text-slate-600">{row.schoolCode}</td>
