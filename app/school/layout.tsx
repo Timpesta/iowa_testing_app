@@ -23,32 +23,50 @@ export default async function SchoolLayout({
   if (!school) redirect("/login?message=pending");
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-white border-b border-slate-200">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-          <Link
-            href="/school/dashboard"
-            className="font-semibold text-slate-900 truncate max-w-[160px] sm:max-w-none"
-          >
-            {school.name}
-          </Link>
+    <div className="min-h-screen bg-slate-50 flex flex-col">
+      <header className="bg-navy-800 px-4 sm:px-6 py-0">
+        <div className="max-w-5xl mx-auto flex items-center justify-between h-14">
+          {/* Logo / school name */}
+          <div className="flex items-center gap-3">
+            <Link href="/" className="text-white font-bold text-base tracking-tight hover:opacity-90 shrink-0">
+              Eagles Edge Testing
+            </Link>
+            <span className="text-navy-300 hidden sm:inline text-sm">·</span>
+            <span className="text-navy-200 text-sm hidden sm:inline truncate max-w-[180px]">
+              {school.name}
+            </span>
+          </div>
 
-          <nav className="flex items-center gap-4 sm:gap-6 text-sm text-slate-600 shrink-0">
-            <Link href="/school/dashboard" className="hover:text-slate-900 hidden sm:inline">
+          {/* Nav */}
+          <nav className="flex items-center gap-1 sm:gap-2">
+            <Link
+              href="/school/dashboard"
+              className="px-3 py-1.5 text-sm font-medium text-navy-200 hover:text-white hover:bg-navy-700 rounded-md transition-colors hidden sm:block"
+            >
               Dashboard
             </Link>
-            <Link href="/school/roster" className="hover:text-slate-900">
+            <Link
+              href="/school/roster"
+              className="px-3 py-1.5 text-sm font-medium text-navy-200 hover:text-white hover:bg-navy-700 rounded-md transition-colors"
+            >
               Roster
             </Link>
-            <Link href="/faq" className="hover:text-slate-900 hidden sm:inline">
+            <Link
+              href="/faq"
+              className="px-3 py-1.5 text-sm font-medium text-navy-200 hover:text-white hover:bg-navy-700 rounded-md transition-colors hidden sm:block"
+            >
               FAQ
             </Link>
-            <SchoolSignOut />
+            <div className="ml-2 pl-2 border-l border-navy-700">
+              <SchoolSignOut />
+            </div>
           </nav>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-6 sm:py-8">{children}</main>
+      <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-8">
+        {children}
+      </main>
     </div>
   );
 }

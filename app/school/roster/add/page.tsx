@@ -10,19 +10,21 @@ export default async function AddStudentPage() {
     <div>
       <Link
         href="/school/roster"
-        className="text-sm text-slate-500 hover:text-slate-700 mb-6 inline-block"
+        className="text-sm text-slate-500 hover:text-navy-800 mb-6 inline-block transition-colors"
       >
         ← Back to roster
       </Link>
-      <h1 className="text-2xl font-semibold text-slate-900 mb-6">Add student</h1>
-      <p className="text-slate-600 text-sm mb-6">
-        Student ID will be auto-generated when you save (e.g. AABQ2000).
+      <h1 className="text-2xl font-bold text-navy-800 mb-1 tracking-tight">Add student</h1>
+      <p className="text-slate-500 text-sm mb-6">
+        Student ID will be auto-generated when you save (e.g.&nbsp;AABQ2000).
       </p>
-      <StudentForm
-        gradeOptions={gradeOptions}
-        genderOptions={genderOptions}
-        mode="add"
-      />
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <StudentForm
+          gradeOptions={gradeOptions}
+          genderOptions={genderOptions}
+          mode="add"
+        />
+      </div>
     </div>
   );
 }

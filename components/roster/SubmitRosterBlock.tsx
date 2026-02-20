@@ -31,15 +31,16 @@ export function SubmitRosterBlock({ activeCycle, submittedAt }: Props) {
 
   if (!activeCycle) {
     return (
-      <p className="text-slate-500 text-sm mb-6">
+      <div className="mb-6 rounded-lg bg-slate-100 border border-slate-200 px-4 py-3 text-slate-500 text-sm">
         No active cycle. Roster submission will be available when a cycle is started.
-      </p>
+      </div>
     );
   }
 
   if (submittedAt) {
     return (
-      <div className="mb-6 flex items-center gap-3">
+      <div className="mb-6 inline-flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-4 py-2.5">
+        <span className="text-green-600 text-sm">✓</span>
         <span className="text-green-700 text-sm font-medium">
           Submitted on {formatSubmittedAt(submittedAt)}
         </span>
@@ -48,19 +49,19 @@ export function SubmitRosterBlock({ activeCycle, submittedAt }: Props) {
   }
 
   return (
-    <div className="mb-6">
+    <div className="mb-6 flex flex-wrap items-center gap-3">
       <button
         type="button"
         onClick={handleSubmit}
         disabled={submitting}
-        className="rounded-lg bg-slate-900 px-4 py-2 text-white text-sm font-medium hover:bg-slate-800 disabled:opacity-50"
+        className="rounded-lg bg-amber-500 px-4 py-2 text-white text-sm font-semibold hover:bg-amber-600 transition-colors disabled:opacity-50"
       >
         {submitting ? "Submitting…" : "Submit roster"}
       </button>
       {message && (
-        <p className={`mt-2 text-sm ${message.startsWith("Roster submitted") ? "text-green-700" : "text-amber-700"}`}>
+        <span className={`text-sm ${message.startsWith("Roster submitted") ? "text-green-700" : "text-amber-700"}`}>
           {message}
-        </p>
+        </span>
       )}
     </div>
   );

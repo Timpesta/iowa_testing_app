@@ -9,7 +9,7 @@ export default async function AdminCyclesPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-slate-900 mb-6">Cycles</h1>
+      <h1 className="text-2xl font-bold text-navy-800 mb-6 tracking-tight">Cycles</h1>
       <CyclesPageClient
         activeCycle={activeCycle}
         history={history}

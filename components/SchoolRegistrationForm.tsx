@@ -56,6 +56,9 @@ export function SchoolRegistrationForm() {
     );
   }
 
+  const inputClass =
+    "w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 placeholder-slate-400 focus:border-navy-800 focus:outline-none focus:ring-1 focus:ring-navy-800";
+
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       {state && !state.success && (
@@ -68,10 +71,7 @@ export function SchoolRegistrationForm() {
       )}
 
       <div>
-        <label
-          htmlFor="name"
-          className="block text-sm font-medium text-slate-700 mb-1"
-        >
+        <label htmlFor="name" className="block text-sm font-medium text-navy-800 mb-1">
           School name
         </label>
         <input
@@ -82,7 +82,7 @@ export function SchoolRegistrationForm() {
           autoComplete="organization"
           aria-invalid={!!errors.name}
           aria-describedby={errors.name ? "name-error" : undefined}
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 placeholder-slate-400 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+          className={inputClass}
           placeholder="e.g. Lincoln Elementary"
         />
         {errors.name && (
@@ -93,10 +93,7 @@ export function SchoolRegistrationForm() {
       </div>
 
       <div>
-        <label
-          htmlFor="contact_name"
-          className="block text-sm font-medium text-slate-700 mb-1"
-        >
+        <label htmlFor="contact_name" className="block text-sm font-medium text-navy-800 mb-1">
           Contact name
         </label>
         <input
@@ -107,7 +104,7 @@ export function SchoolRegistrationForm() {
           autoComplete="name"
           aria-invalid={!!errors.contact_name}
           aria-describedby={errors.contact_name ? "contact_name-error" : undefined}
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 placeholder-slate-400 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+          className={inputClass}
           placeholder="e.g. Jane Smith"
         />
         {errors.contact_name && (
@@ -118,10 +115,7 @@ export function SchoolRegistrationForm() {
       </div>
 
       <div>
-        <label
-          htmlFor="contact_email"
-          className="block text-sm font-medium text-slate-700 mb-1"
-        >
+        <label htmlFor="contact_email" className="block text-sm font-medium text-navy-800 mb-1">
           Contact email
         </label>
         <input
@@ -131,10 +125,8 @@ export function SchoolRegistrationForm() {
           required
           autoComplete="email"
           aria-invalid={!!errors.contact_email}
-          aria-describedby={
-            errors.contact_email ? "contact_email-error" : undefined
-          }
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 placeholder-slate-400 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+          aria-describedby={errors.contact_email ? "contact_email-error" : undefined}
+          className={inputClass}
           placeholder="e.g. jane@school.edu"
         />
         {errors.contact_email && (
@@ -146,7 +138,7 @@ export function SchoolRegistrationForm() {
 
       <button
         type="submit"
-        className="w-full rounded-lg bg-slate-900 px-4 py-3 text-white font-medium hover:bg-slate-800 transition-colors"
+        className="w-full rounded-lg bg-navy-800 px-4 py-2.5 text-white font-semibold hover:bg-navy-900 transition-colors"
       >
         Submit registration
       </button>

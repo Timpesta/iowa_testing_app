@@ -28,18 +28,20 @@ export default async function ApproveSchoolPage({ params }: PageProps) {
     <div className="max-w-md">
       <Link
         href="/admin/schools?filter=pending"
-        className="text-sm text-slate-500 hover:text-slate-700 mb-6 inline-block"
+        className="text-sm text-slate-500 hover:text-navy-800 mb-6 inline-block transition-colors"
       >
         ← Back to schools
       </Link>
-      <h1 className="text-2xl font-semibold text-slate-900 mb-2">
+      <h1 className="text-2xl font-bold text-navy-800 mb-1 tracking-tight">
         Approve school
       </h1>
-      <p className="text-slate-600 mb-6">
-        Assign a unique code for <strong>{school.name}</strong>. The code must be
-        2–4 uppercase letters and will be used in student IDs (e.g. AABQ2000).
+      <p className="text-slate-500 text-sm mb-6">
+        Assign a unique code for <strong className="text-navy-800">{school.name}</strong>. The code must be
+        2–4 uppercase letters and will be used in student IDs (e.g.&nbsp;AABQ2000).
       </p>
-      <ApproveSchoolForm schoolId={school.id} schoolName={school.name} />
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <ApproveSchoolForm schoolId={school.id} schoolName={school.name} />
+      </div>
     </div>
   );
 }

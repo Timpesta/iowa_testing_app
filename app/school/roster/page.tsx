@@ -34,9 +34,7 @@ async function getSchoolAndStudents() {
     .eq("active", true)
     .order("student_id");
 
-  if (error) {
-    console.error("Error fetching students:", error.message);
-  }
+  if (error) console.error("Error fetching students:", error.message);
 
   return { school, students: students ?? [] };
 }
@@ -51,10 +49,10 @@ export default async function RosterPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
-        <h1 className="text-2xl font-semibold text-slate-900">Student roster</h1>
+        <h1 className="text-2xl font-bold text-navy-800 tracking-tight">Student roster</h1>
         <Link
           href="/school/roster/add"
-          className="rounded-lg bg-slate-900 px-4 py-2 text-white text-sm font-medium hover:bg-slate-800"
+          className="rounded-lg bg-navy-800 px-4 py-2 text-white text-sm font-semibold hover:bg-navy-900 transition-colors"
         >
           Add student
         </Link>
@@ -65,13 +63,13 @@ export default async function RosterPage() {
         submittedAt={submission?.submitted_at ?? null}
       />
 
-      <div className="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto">
         {students.length === 0 ? (
-          <div className="px-4 py-12 text-center">
-            <p className="text-slate-500 text-sm">
-              No students added yet. Click{" "}
-              <Link href="/school/roster/add" className="font-medium text-slate-700 underline">
-                Add student
+          <div className="px-4 py-14 text-center">
+            <p className="text-slate-400 text-sm">
+              No students added yet.{" "}
+              <Link href="/school/roster/add" className="font-semibold text-navy-800 hover:underline">
+                Add your first student
               </Link>{" "}
               to begin.
             </p>
@@ -79,26 +77,26 @@ export default async function RosterPage() {
         ) : (
           <table className="w-full min-w-[600px]">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/80">
-                <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
+              <tr className="border-b border-slate-200 bg-slate-50">
+                <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-4 py-3">
                   Student ID
                 </th>
-                <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
+                <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-4 py-3">
                   First name
                 </th>
-                <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
+                <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-4 py-3">
                   Last name
                 </th>
-                <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
+                <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-4 py-3">
                   DOB
                 </th>
-                <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
+                <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-4 py-3">
                   Gender
                 </th>
-                <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
+                <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-4 py-3">
                   Grade
                 </th>
-                <th className="text-right text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
+                <th className="text-right text-xs font-semibold text-slate-400 uppercase tracking-wider px-4 py-3">
                   Actions
                 </th>
               </tr>
@@ -107,18 +105,18 @@ export default async function RosterPage() {
               {students.map((s) => (
                 <tr
                   key={s.id}
-                  className="border-b border-slate-100 last:border-0 hover:bg-slate-50/50"
+                  className="border-b border-slate-100 last:border-0 hover:bg-slate-50/70 transition-colors"
                 >
-                  <td className="px-4 py-3 font-mono text-slate-900">{s.student_id}</td>
-                  <td className="px-4 py-3 text-slate-900">{s.first_name}</td>
-                  <td className="px-4 py-3 text-slate-900">{s.last_name}</td>
-                  <td className="px-4 py-3 text-slate-600">{formatDateDisplay(s.date_of_birth)}</td>
-                  <td className="px-4 py-3 text-slate-600">{GENDER_LABELS[s.gender] ?? s.gender}</td>
-                  <td className="px-4 py-3 text-slate-600">{s.grade}</td>
+                  <td className="px-4 py-3 font-mono text-sm text-slate-600">{s.student_id}</td>
+                  <td className="px-4 py-3 font-medium text-navy-800">{s.first_name}</td>
+                  <td className="px-4 py-3 font-medium text-navy-800">{s.last_name}</td>
+                  <td className="px-4 py-3 text-slate-500 text-sm">{formatDateDisplay(s.date_of_birth)}</td>
+                  <td className="px-4 py-3 text-slate-500 text-sm">{GENDER_LABELS[s.gender] ?? s.gender}</td>
+                  <td className="px-4 py-3 text-slate-500 text-sm">{s.grade}</td>
                   <td className="px-4 py-3 text-right">
                     <Link
                       href={`/school/roster/${s.id}/edit`}
-                      className="text-sm font-medium text-slate-700 hover:text-slate-900"
+                      className="text-sm font-semibold text-amber-500 hover:text-amber-600 transition-colors"
                     >
                       Edit
                     </Link>

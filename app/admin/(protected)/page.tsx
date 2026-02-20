@@ -6,15 +6,13 @@ import { getSubmissionStats } from "@/lib/submissions";
 export const dynamic = "force-dynamic";
 
 async function getCounts() {
-  const [schoolsRes, pendingRes, approvedRes, studentsRes] = await Promise.all([
-    supabase.from("schools").select("id", { count: "exact", head: true }),
+  const [pendingRes, approvedRes, studentsRes] = await Promise.all([
     supabase.from("schools").select("id", { count: "exact", head: true }).eq("status", "pending"),
     supabase.from("schools").select("id", { count: "exact", head: true }).eq("status", "approved"),
     supabase.from("students").select("id", { count: "exact", head: true }),
   ]);
 
   return {
-    totalSchools: schoolsRes.count ?? 0,
     pendingSchools: pendingRes.count ?? 0,
     approvedSchools: approvedRes.count ?? 0,
     totalStudents: studentsRes.count ?? 0,
@@ -37,15 +35,23 @@ export default async function AdminDashboardPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-slate-900 mb-8">Dashboard</h1>
+      <h1 className="text-2xl font-bold text-navy-800 mb-6 tracking-tight">Dashboard</h1>
 
+      {/* Active cycle banner */}
       {activeCycle ? (
-        <div className="bg-slate-900 text-white rounded-lg px-4 py-3 mb-8">
-          <p className="text-sm text-slate-300">Current cycle</p>
-          <p className="text-xl font-semibold">{formatCycleLabel(activeCycle)}</p>
+        <div className="flex items-center justify-between bg-navy-800 text-white rounded-xl px-5 py-4 mb-8">
+          <div>
+            <p className="text-navy-200 text-xs font-medium uppercase tracking-wider mb-0.5">
+              Current cycle
+            </p>
+            <p className="text-xl font-bold">{formatCycleLabel(activeCycle)}</p>
+          </div>
+          <span className="bg-amber-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
+            Active
+          </span>
         </div>
       ) : (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-amber-800 text-sm mb-8">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl px-5 py-4 mb-8 text-amber-800 text-sm">
           No active cycle. Go to{" "}
           <Link href="/admin/cycles" className="underline font-medium">
             Cycles
@@ -54,40 +60,68 @@ export default async function AdminDashboardPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-lg border border-slate-200 p-6">
-          <p className="text-sm text-slate-500 font-medium">Pending schools</p>
-          <p className="text-2xl font-semibold text-slate-900 mt-1">{counts.pendingSchools}</p>
+      {/* Stat cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div className="bg-white rounded-xl border border-slate-200 p-5">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+            Pending schools
+          </p>
+          <p className="text-3xl font-bold text-navy-800">{counts.pendingSchools}</p>
         </div>
-        <div className="bg-white rounded-lg border border-slate-200 p-6">
-          <p className="text-sm text-slate-500 font-medium">Approved schools</p>
-          <p className="text-2xl font-semibold text-slate-900 mt-1">{counts.approvedSchools}</p>
+        <div className="bg-white rounded-xl border border-slate-200 p-5">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+            Approved schools
+          </p>
+          <p className="text-3xl font-bold text-navy-800">{counts.approvedSchools}</p>
         </div>
-        <div className="bg-white rounded-lg border border-slate-200 p-6">
-          <p className="text-sm text-slate-500 font-medium">Total students</p>
-          <p className="text-2xl font-semibold text-slate-900 mt-1">{counts.totalStudents}</p>
+        <div className="bg-white rounded-xl border border-slate-200 p-5">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+            Total students
+          </p>
+          <p className="text-3xl font-bold text-navy-800">{counts.totalStudents}</p>
         </div>
       </div>
 
+      {/* Submission stats */}
       {activeCycle && submissionStats.approvedCount > 0 && (
-        <div className="bg-white rounded-lg border border-slate-200 p-6 mb-8">
-          <p className="text-sm text-slate-500 font-medium mb-1">Current cycle submissions</p>
-          <p className="text-xl font-semibold text-slate-900">
-            {submissionStats.submittedCount} of {submissionStats.approvedCount} schools have submitted
+        <div className="bg-white rounded-xl border border-slate-200 p-5 mb-8">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
+            Cycle submissions
           </p>
+          <div className="flex items-baseline gap-2 mb-1">
+            <span className="text-3xl font-bold text-navy-800">
+              {submissionStats.submittedCount}
+            </span>
+            <span className="text-slate-500 text-sm">
+              of {submissionStats.approvedCount} schools submitted
+            </span>
+          </div>
+
+          {/* Progress bar */}
+          <div className="w-full bg-slate-100 rounded-full h-2 mt-3 mb-4">
+            <div
+              className="bg-amber-500 h-2 rounded-full transition-all"
+              style={{
+                width: `${submissionStats.approvedCount > 0
+                  ? Math.round((submissionStats.submittedCount / submissionStats.approvedCount) * 100)
+                  : 0}%`,
+              }}
+            />
+          </div>
+
           {submissionStats.submittedCount === 0 ? (
-            <p className="mt-2 text-sm text-slate-500">No schools have submitted for this cycle yet.</p>
+            <p className="text-slate-500 text-sm">No schools have submitted for this cycle yet.</p>
           ) : notSubmittedList.length > 0 ? (
-            <div className="mt-4">
-              <p className="text-sm text-slate-600 font-medium mb-2">Still waiting on</p>
-              <ul className="text-sm text-slate-700 list-disc list-inside space-y-0.5">
+            <div>
+              <p className="text-sm font-medium text-slate-600 mb-1">Still waiting on:</p>
+              <ul className="text-sm text-slate-600 list-disc list-inside space-y-0.5">
                 {notSubmittedList.map((s) => (
                   <li key={s.id}>{s.name}</li>
                 ))}
               </ul>
             </div>
           ) : (
-            <p className="mt-2 text-sm text-green-700 font-medium">All schools have submitted.</p>
+            <p className="text-sm font-medium text-green-700">All schools have submitted.</p>
           )}
         </div>
       )}
@@ -99,9 +133,9 @@ export default async function AdminDashboardPage() {
       {counts.pendingSchools > 0 && (
         <Link
           href="/admin/schools?filter=pending"
-          className="inline-flex items-center text-slate-700 font-medium hover:text-slate-900"
+          className="inline-flex items-center text-sm font-semibold text-amber-500 hover:text-amber-600 transition-colors"
         >
-          View pending schools →
+          View {counts.pendingSchools} pending school{counts.pendingSchools !== 1 ? "s" : ""} →
         </Link>
       )}
     </div>

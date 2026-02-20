@@ -7,7 +7,7 @@ export function SchoolSignOut() {
     <form action={schoolSignOut}>
       <button
         type="submit"
-        className="text-sm text-slate-500 hover:text-slate-700"
+        className="px-3 py-1.5 text-sm font-medium text-navy-200 hover:text-white hover:bg-navy-700 rounded-md transition-colors"
       >
         Sign out
       </button>

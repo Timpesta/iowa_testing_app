@@ -62,7 +62,7 @@ export default async function AdminSchoolsPage({ searchParams }: PageProps) {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-slate-900 mb-6">Schools</h1>
+      <h1 className="text-2xl font-bold text-navy-800 mb-6 tracking-tight">Schools</h1>
       <SchoolTable
         schools={schools}
         currentFilter={filter}

@@ -57,9 +57,9 @@ export function MagicLinkForm() {
       <div>
         <label
           htmlFor="email"
-          className="block text-sm font-medium text-slate-700 mb-1"
+          className="block text-sm font-medium text-navy-800 mb-1"
         >
-          Email
+          Email address
         </label>
         <input
           id="email"
@@ -69,14 +69,14 @@ export function MagicLinkForm() {
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 placeholder-slate-400 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+          className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 placeholder-slate-400 focus:border-navy-800 focus:outline-none focus:ring-1 focus:ring-navy-800"
           placeholder="you@school.edu"
         />
       </div>
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-lg bg-slate-900 px-4 py-3 text-white font-medium hover:bg-slate-800 transition-colors disabled:opacity-50"
+        className="w-full rounded-lg bg-navy-800 px-4 py-2.5 text-white font-semibold hover:bg-navy-900 transition-colors disabled:opacity-50"
       >
         {loading ? "Sending…" : "Send login link"}
       </button>

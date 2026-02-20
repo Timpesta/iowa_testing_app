@@ -63,20 +63,30 @@ export function CyclesPageClient({ activeCycle, history, currentYear }: Props) {
     }
   }
 
+  const inputClass =
+    "w-full rounded-lg border border-slate-300 px-3 py-2.5 text-slate-900 focus:border-navy-800 focus:outline-none focus:ring-1 focus:ring-navy-800";
+
   return (
     <div className="space-y-8">
       {/* Current cycle card */}
-      <div className="bg-white rounded-lg border border-slate-200 p-6">
-        <h2 className="text-lg font-medium text-slate-900 mb-2">Current cycle</h2>
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
+          Current cycle
+        </h2>
         {activeCycle ? (
-          <p className="text-2xl font-semibold text-slate-900">{formatCycleLabel(activeCycle)}</p>
+          <div className="flex items-center justify-between">
+            <p className="text-2xl font-bold text-navy-800">{formatCycleLabel(activeCycle)}</p>
+            <span className="bg-amber-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
+              Active
+            </span>
+          </div>
         ) : (
-          <p className="text-slate-500 text-sm">No active cycle. Start one below.</p>
+          <p className="text-slate-400 text-sm mb-1">No active cycle. Start one below.</p>
         )}
         <button
           type="button"
           onClick={openModal}
-          className="mt-4 rounded-lg bg-slate-900 px-4 py-2 text-white text-sm font-medium hover:bg-slate-800"
+          className="mt-4 rounded-lg bg-navy-800 px-4 py-2 text-white text-sm font-semibold hover:bg-navy-900 transition-colors"
         >
           Start new cycle
         </button>
@@ -84,13 +94,15 @@ export function CyclesPageClient({ activeCycle, history, currentYear }: Props) {
 
       {/* History */}
       <div>
-        <h2 className="text-lg font-medium text-slate-900 mb-3">Past cycles</h2>
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
+          Past cycles
+        </h2>
         {history.length === 0 ? (
-          <p className="text-slate-500 text-sm">No past cycles yet.</p>
+          <p className="text-slate-400 text-sm">No past cycles yet.</p>
         ) : (
-          <ul className="bg-white rounded-lg border border-slate-200 divide-y divide-slate-100">
+          <ul className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100">
             {history.map((c) => (
-              <li key={c.id} className="px-4 py-3 text-slate-700">
+              <li key={c.id} className="px-5 py-3 text-slate-600 text-sm">
                 {formatCycleLabel(c)}
               </li>
             ))}
@@ -106,22 +118,20 @@ export function CyclesPageClient({ activeCycle, history, currentYear }: Props) {
           aria-modal="true"
           aria-labelledby="new-cycle-title"
         >
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
             {step === "configure" ? (
               <>
-                <h2 id="new-cycle-title" className="text-xl font-semibold text-slate-900 mb-4">
+                <h2 id="new-cycle-title" className="text-xl font-bold text-navy-800 mb-4">
                   Start new cycle
                 </h2>
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
-                      Type
-                    </label>
+                    <label className="block text-sm font-medium text-navy-800 mb-1">Type</label>
                     <select
                       value={type}
                       onChange={(e) => setType(e.target.value as "fall" | "spring")}
-                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+                      className={inputClass}
                     >
                       <option value="fall">Fall</option>
                       <option value="spring">Spring</option>
@@ -129,16 +139,14 @@ export function CyclesPageClient({ activeCycle, history, currentYear }: Props) {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
-                      Year
-                    </label>
+                    <label className="block text-sm font-medium text-navy-800 mb-1">Year</label>
                     <input
                       type="number"
                       min={2000}
                       max={2100}
                       value={year}
                       onChange={(e) => setYear(parseInt(e.target.value, 10) || currentYear)}
-                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+                      className={inputClass}
                     />
                   </div>
 
@@ -146,20 +154,17 @@ export function CyclesPageClient({ activeCycle, history, currentYear }: Props) {
                     className={`rounded-lg border px-4 py-3 text-sm ${
                       isFall
                         ? "bg-amber-50 border-amber-200 text-amber-800"
-                        : "bg-blue-50 border-blue-200 text-blue-800"
+                        : "bg-navy-50 border-navy-100 text-navy-800"
                     }`}
                   >
-                    <p className="font-medium mb-1">
+                    <p className="font-semibold mb-1">
                       {isFall ? "Grade changes will apply" : "No grade changes"}
                     </p>
                     <p>{warningMessage}</p>
                   </div>
 
                   {error && (
-                    <div
-                      role="alert"
-                      className="rounded-lg bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm"
-                    >
+                    <div role="alert" className="rounded-lg bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm">
                       {error}
                     </div>
                   )}
@@ -169,17 +174,14 @@ export function CyclesPageClient({ activeCycle, history, currentYear }: Props) {
                   <button
                     type="button"
                     onClick={closeModal}
-                    className="rounded-lg border border-slate-300 px-4 py-2 text-slate-700 font-medium hover:bg-slate-50"
+                    className="rounded-lg border border-slate-300 px-4 py-2 text-slate-600 font-medium hover:bg-slate-50 transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
-                      setError(null);
-                      setStep("confirm");
-                    }}
-                    className="rounded-lg bg-slate-900 px-4 py-2 text-white font-medium hover:bg-slate-800"
+                    onClick={() => { setError(null); setStep("confirm"); }}
+                    className="rounded-lg bg-navy-800 px-4 py-2 text-white font-semibold hover:bg-navy-900 transition-colors"
                   >
                     Review &amp; confirm
                   </button>
@@ -187,29 +189,27 @@ export function CyclesPageClient({ activeCycle, history, currentYear }: Props) {
               </>
             ) : (
               <>
-                <h2 id="new-cycle-title" className="text-xl font-semibold text-slate-900 mb-1">
+                <h2 id="new-cycle-title" className="text-xl font-bold text-navy-800 mb-1">
                   Confirm new cycle
                 </h2>
                 <p className="text-slate-500 text-sm mb-5">
-                  Please review before proceeding — this cannot be undone.
+                  Review before proceeding — this cannot be undone.
                 </p>
 
                 <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-4 text-sm space-y-2 mb-5">
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Cycle</span>
-                    <span className="font-medium text-slate-900 capitalize">
-                      {type} {year}
-                    </span>
+                    <span className="text-slate-500">New cycle</span>
+                    <span className="font-semibold text-navy-800 capitalize">{type} {year}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Current cycle closed</span>
-                    <span className="font-medium text-slate-900">
+                    <span className="text-slate-500">Closes</span>
+                    <span className="font-semibold text-navy-800">
                       {activeCycle ? formatCycleLabel(activeCycle) : "none"}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-500">Grade changes</span>
-                    <span className="font-medium text-slate-900">
+                    <span className="font-semibold text-navy-800">
                       {isFall ? "Yes — grades +1, grade 12 inactive" : "None"}
                     </span>
                   </div>
@@ -224,10 +224,7 @@ export function CyclesPageClient({ activeCycle, history, currentYear }: Props) {
                 )}
 
                 {error && (
-                  <div
-                    role="alert"
-                    className="rounded-lg bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm mb-4"
-                  >
+                  <div role="alert" className="rounded-lg bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-sm mb-4">
                     {error}
                   </div>
                 )}
@@ -237,7 +234,7 @@ export function CyclesPageClient({ activeCycle, history, currentYear }: Props) {
                     type="button"
                     onClick={() => setStep("configure")}
                     disabled={submitting}
-                    className="rounded-lg border border-slate-300 px-4 py-2 text-slate-700 font-medium hover:bg-slate-50 disabled:opacity-50"
+                    className="rounded-lg border border-slate-300 px-4 py-2 text-slate-600 font-medium hover:bg-slate-50 disabled:opacity-50 transition-colors"
                   >
                     Back
                   </button>
@@ -245,10 +242,10 @@ export function CyclesPageClient({ activeCycle, history, currentYear }: Props) {
                     type="button"
                     onClick={handleConfirm}
                     disabled={submitting}
-                    className={`rounded-lg px-4 py-2 text-white font-medium disabled:opacity-50 disabled:pointer-events-none ${
+                    className={`rounded-lg px-4 py-2 text-white font-semibold disabled:opacity-50 disabled:pointer-events-none transition-colors ${
                       isFall
-                        ? "bg-amber-600 hover:bg-amber-700"
-                        : "bg-slate-900 hover:bg-slate-800"
+                        ? "bg-amber-500 hover:bg-amber-600"
+                        : "bg-navy-800 hover:bg-navy-900"
                     }`}
                   >
                     {submitting ? "Starting…" : `Start ${type} ${year}`}
