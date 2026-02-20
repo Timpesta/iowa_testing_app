@@ -131,7 +131,7 @@ export default async function AdminExportPage() {
         {!hasExported && activeCycle && (
           <div className="bg-slate-50 rounded-xl border border-dashed border-slate-200 p-6 flex items-center justify-center">
             <p className="text-slate-400 text-sm text-center">
-              "Export new students only" will appear here after your first full export.
+              &quot;Export new students only&quot; will appear here after your first full export.
             </p>
           </div>
         )}
