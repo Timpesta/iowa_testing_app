@@ -34,7 +34,7 @@ export default async function AdminLayout({
         {/* Logo */}
         <div className="px-4 py-4 border-b border-navy-800">
           <Link href="/admin" className="text-white font-bold text-base tracking-tight hover:opacity-90 block">
-            Eagles Edge Testing
+            Eagles Edge
           </Link>
           <span className="text-xs text-navy-300 font-medium uppercase tracking-wider mt-0.5 block">
             Admin

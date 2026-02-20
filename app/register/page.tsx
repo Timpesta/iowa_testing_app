@@ -6,7 +6,7 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-slate-50 flex flex-col">
       <header className="bg-navy-800 px-6 py-4">
         <Link href="/" className="text-white font-bold text-lg tracking-tight hover:opacity-90">
-          Eagles Edge Testing
+          Eagles Edge
         </Link>
       </header>
 

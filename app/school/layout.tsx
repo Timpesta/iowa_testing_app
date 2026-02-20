@@ -29,7 +29,7 @@ export default async function SchoolLayout({
           {/* Logo / school name */}
           <div className="flex items-center gap-3">
             <Link href="/" className="text-white font-bold text-base tracking-tight hover:opacity-90 shrink-0">
-              Eagles Edge Testing
+              Eagles Edge
             </Link>
             <span className="text-navy-300 hidden sm:inline text-sm">·</span>
             <span className="text-navy-200 text-sm hidden sm:inline truncate max-w-[180px]">

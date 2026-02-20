@@ -20,7 +20,7 @@ const PLACEHOLDER_FAQS = [
   {
     question: "Who do I contact for help?",
     answer:
-      "For technical or process questions, contact the Eagles Edge Testing administrator. Contact details will be updated here once finalized.",
+      "For technical or process questions, contact the Eagles Edge administrator. Contact details will be updated here once finalized.",
   },
 ];
 
@@ -29,7 +29,7 @@ export default function FAQPage() {
     <div className="min-h-screen bg-slate-50 flex flex-col">
       <header className="bg-navy-800 px-6 py-4">
         <Link href="/" className="text-white font-bold text-lg tracking-tight hover:opacity-90">
-          Eagles Edge Testing
+          Eagles Edge
         </Link>
       </header>
 

@@ -7,7 +7,7 @@ export default function Home() {
       {/* Top bar */}
       <header className="bg-navy-800 px-6 py-4">
         <span className="text-white font-bold text-lg tracking-tight">
-          Eagles Edge Testing
+          Eagles Edge
         </span>
       </header>
 
@@ -18,7 +18,7 @@ export default function Home() {
             Iowa Standardized Testing
           </div>
           <h1 className="text-4xl font-bold text-navy-800 mb-4 tracking-tight leading-tight">
-            Eagles Edge<br />Testing Portal
+            Acton Academy<br />Testing Portal
           </h1>
           <p className="text-slate-500 text-base mb-10 leading-relaxed">
             Roster management for Iowa standardized testing.
@@ -41,7 +41,7 @@ export default function Home() {
       </main>
 
       <footer className="text-center text-xs text-slate-400 py-6">
-        Eagles Edge Testing Portal
+          Acton Academy Testing Portal
       </footer>
     </div>
   );
