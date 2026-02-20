@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { AdminSignOut } from "@/components/admin/AdminSignOut";
 
 const nav = [
   { href: "/admin", label: "Dashboard" },
@@ -7,11 +10,21 @@ const nav = [
   { href: "/admin/export", label: "Export" },
 ];
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user?.email) redirect("/admin/login");
+
+  const { data: isAdmin } = await supabase.rpc("is_admin", { p_email: user.email });
+  if (!isAdmin) {
+    await supabase.auth.signOut();
+    redirect("/admin/login?error=denied");
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <aside className="w-56 bg-white border-r border-slate-200 flex flex-col">
@@ -34,6 +47,9 @@ export default function AdminLayout({
             ))}
           </ul>
         </nav>
+        <div className="p-2 border-t border-slate-200">
+          <AdminSignOut />
+        </div>
       </aside>
       <main className="flex-1 p-8">{children}</main>
     </div>

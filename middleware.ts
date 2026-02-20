@@ -32,29 +32,35 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  await supabase.auth.getUser();
-
   const pathname = request.nextUrl.pathname;
-  if (!pathname.startsWith("/school")) {
+
+  // ── /admin/* (skip login page itself) ────────────────────────────────────
+  if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login")) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user?.email) {
+      return NextResponse.redirect(new URL("/admin/login", request.url));
+    }
+    // Admin check is enforced in the layout server component (uses is_admin RPC).
     return response;
   }
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user?.email) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
+  // ── /school/* ─────────────────────────────────────────────────────────────
+  if (pathname.startsWith("/school")) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user?.email) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
 
-  const { data: school } = await supabase
-    .from("schools")
-    .select("id")
-    .eq("contact_email", user.email)
-    .eq("status", "approved")
-    .maybeSingle();
+    const { data: school } = await supabase
+      .from("schools")
+      .select("id")
+      .eq("contact_email", user.email)
+      .eq("status", "approved")
+      .maybeSingle();
 
-  if (!school) {
-    return NextResponse.redirect(new URL("/login?message=pending", request.url));
+    if (!school) {
+      return NextResponse.redirect(new URL("/login?message=pending", request.url));
+    }
   }
 
   return response;
